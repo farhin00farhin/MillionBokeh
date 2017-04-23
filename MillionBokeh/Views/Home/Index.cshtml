@@ -1,0 +1,224 @@
+﻿@model MillionBokeh.Models.HomeViewModel
+@{
+    Layout = "~/Views/Shared/_HomeLayout.cshtml";
+    ViewBag.EditUrl = "/home/edit";
+    ViewBag.Title = "Home | Million Bokeh Photographer's Association";
+    ViewBag.CurrentMenu = "home";
+}
+
+
+<section class="container-fluid">
+    <div class="row">
+        <header class="col-lg-12 ">
+            <div class="polaroids">
+                <a class="hidden-md-down">
+                    <img src="../images/site/nature-branches-leaf-leaves.jpg" alt="Red autumn leaves on a tree" />
+                </a>
+                <a>
+                    “Taking an image, freezing a moment, reveals how rich reality truly is.”
+                    <img src="../images/site/nature-branches-leaf-leaves.jpg" alt="Red autumn leaves on a tree" />
+                </a>
+                <a class="hidden-md-down">
+                    <img src="../images/site/nature-branches-leaf-leaves.jpg" alt="Red autumn leaves on a tree" />
+                </a>
+            </div>
+            <div class="polaroids">
+                <a class="hidden-md-down">
+                    <img src="../images/site/pexels-photo-169672.jpg" alt="Man standing on a rock on the water looking at the sunset" />
+                </a>
+                <a title="">
+                    “We are making photographs to understand what our lives mean to us.”
+                    <img src="../images/site/pexels-photo-169672.jpg" alt="Man standing on a rock on the water looking at the sunset" />
+                </a>
+                <a class="hidden-md-down">
+                    <img src="../images/site/pexels-photo-169672.jpg" alt="Man standing on a rock on the water looking at the sunset" />
+                </a>
+            </div>
+        </header>
+    </div>
+</section>
+
+<section class="container">
+
+    @if ((MillionBokeh.Models.Utilities.IsUserAdmin(User)))
+    {
+        using (Html.BeginForm(null, null, FormMethod.Post, new { id = "__AjaxAntiForgeryForm" }))
+        {
+            @Html.AntiForgeryToken()
+        }
+
+        @CMSHelpers.ShowAdminMessage()
+
+        <div class="container wow fadeIn justify-content-center">
+            <div class="row">
+                <div class="col">
+                    <div class="alert alert-warning" role="alert">
+                        Please <button id="disable-links" class="btn btn-secondary btn-sm">click here</button> to disable links before you attempt to edit the content.
+                        <a id="enable-links" href="/" class="btn btn-secondary btn-sm">Refresh</a> the page to enable the links again.
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script>
+            $(function () {
+                $("a:has(.cmsdisplay), .cmsdisplay").addClass("stopedit");
+
+                $("#disable-links").click(function (e) {
+                    alert("Links have been disabled for editing");
+                    $(".stopedit").removeClass("stopedit");
+
+                    $("a").not("#enable-links").click(function (e) {
+                        e.preventDefault();
+                    });
+                });
+            });
+        </script>
+    }
+    <div class="row text-center">
+        <div class="col">
+            <h1 class="mb-5 mt-5">About Million Bokeh Photographers' Association</h1>
+
+            <span class="cmsdisplay" data-property="AboutUs1">@Html.Raw(Model.AboutUs1)</span>
+            @CMSHelpers.CMSEditorTinyMCE("AboutUs1", Model.AboutUs1)
+        </div>
+    </div>
+</section>
+<div class="container cards">
+    <div class="card-columns">
+        <div class="card text-center wow fadeIn circle mb-5 mb-sm-0" data-wow-offset="300" data-wow-duration=".5s">
+            <div class="fig">
+                <a href="/products/index">
+                    <div class="card-block card-with-text">
+                        <h4 class="card-title cmsdisplay" data-property="Card1Title">@Model.Card1Title</h4>
+                        @CMSHelpers.CMSEditorSimple("Card1Title", Model.Card1Title)
+                        <p class="card-text cmsdisplay" data-property="Card1Text">@Model.Card1Text</p>
+                        @CMSHelpers.CMSEditorSimple("Card1Text", Model.Card1Text)
+                        <p class="card-text"><small class="text-muted cmsdisplay" data-property="Card1Link">@Model.Card1Link </small> <i class="fa fa-arrow-right"></i></p>
+                        @CMSHelpers.CMSEditorSimple("Card1Link", Model.Card1Link)
+                    </div>
+                </a>
+            </div>
+        </div>
+        <div class="card wow fadeIn circle mb-5 mb-sm-0" data-wow-offset="300">
+            <div class="fig">
+                <a href="/events/index">
+                    <div class="card-block card-with-image">
+                        <h4 class="card-title cmsdisplay" data-property="Card2Title">@Model.Card2Title</h4>
+                        @CMSHelpers.CMSEditorSimple("Card2Title", Model.Card2Title)
+                        <p class="card-text cmsdisplay" data-property="Card2Text">@Model.Card2Text</p>
+                        @CMSHelpers.CMSEditorSimple("Card2Text", Model.Card2Text)
+                    </div>
+                    <img class="card-img-top img-fluid cmsdisplay" data-property="Card2Image" src="../Images/Site/@Model.Card2Image" alt="Card promo image">
+                </a>
+                @CMSHelpers.CMSEditorImage("Card2Image")
+            </div>
+        </div>
+        <div class="card wow fadeIn circle mb-5 mb-sm-0" data-wow-offset="300">
+            <div class="fig">
+                <a class="cmsdisplay" data-property="Card3Link" href="@Model.Card3Link">
+                    <img class="card-img-top img-fluid" src="../Images/Site/pexels-photo-296881.jpeg" alt="Featured member image">
+                    @CMSHelpers.CMSEditorSimple("Card3Link", Model.Card3Link)
+                    <div class="card-block card-with-image">
+                        <h4 class="card-title">Featured Member of the Month</h4>
+                        <p class="card-text">Check out this month's featured member and their gallery.</p>
+                        <p class="card-text"><small class="text-muted">Full gallery inside <i class="fa fa-arrow-right"></i></small></p>
+                    </div>
+
+                </a>
+            </div>
+        </div>
+        <div class="card text-center wow fadeInDown circle mb-5 mb-sm-0" data-wow-offset="300">
+            <div class="card-block card-with-text fig no-link">
+                <h4 class="card-title cmsdisplay" data-property="Card4Title">@Model.Card4Title</h4>
+                @CMSHelpers.CMSEditorSimple("Card4Title", Model.Card4Title)
+                <p class="card-text cmsdisplay" data-property="Card4Text1">@Model.Card4Text1</p>
+                @CMSHelpers.CMSEditorSimple("Card4Text1", Model.Card4Text1)
+                <p class="card-text cmsdisplay" data-property="Card4Text2">@Model.Card4Text2</p>
+                @CMSHelpers.CMSEditorSimple("Card4Text2", Model.Card4Text2)
+            </div>
+        </div>
+        <div class="card card-inverse card-primary p-3 text-center wow fadeInDown circle mb-5" data-wow-offset="300">
+            <div class="fig no-link">
+                <blockquote class="card-blockquote">
+                    <p class="cmsdisplay" data-property="Card5Text1">@Model.Card5Text1</p>
+                    @CMSHelpers.CMSEditorSimple("Card5Text1", Model.Card5Text1)
+                    <footer>
+                        <small class="cmsdisplay" data-property="Card5Text2">
+                            @Model.Card5Text2
+                        </small>
+                        @CMSHelpers.CMSEditorSimple("Card5Text2", Model.Card5Text2)
+                    </footer>
+                </blockquote>
+            </div>
+        </div>
+        <div class="card wow fadeIn circle mb-5 mb-sm-0" data-wow-offset="300">
+            <div class="fig">
+                <a href="/members/benefits">
+                    <div class="card-block card-with-image">
+                        <h4 class="card-title cmsdisplay" data-property="Card6Title">@Model.Card6Title</h4>
+                        @CMSHelpers.CMSEditorSimple("Card6Title", Model.Card6Title)
+                        <p class="card-text cmsdisplay" data-property="Card6Text1">@Model.Card6Text1</p>
+                        @CMSHelpers.CMSEditorSimple("Card6Text1", Model.Card6Text1)
+                        <p class="card-text"><small class="text-muted cmsdisplay" data-property="Card6Text2">@Model.Card6Text2</small></p>
+                        @CMSHelpers.CMSEditorSimple("Card6Text2", Model.Card6Text2)
+                    </div>
+                    <img class="card-img img-fluid cmsdisplay" data-property="Card6Image" src="../Images/Site/@Model.Card6Image" alt="Card promo image">
+                    @CMSHelpers.CMSEditorImage("Card6Image")
+                </a>
+            </div>
+        </div>
+        <div class="card wow fadeIn circle mb-5 mb-sm-0" data-wow-offset="300">
+            <div class="fig">
+                <a href="/members/benefits">
+                    <div class="card-block card-with-text">
+                        <h4 class="card-title cmsdisplay" data-property="Card7Title">@Model.Card7Title</h4>
+                        @CMSHelpers.CMSEditorSimple("Card7Title", Model.Card7Title)
+                        <p class="card-text cmsdisplay" data-property="Card7Text1">@Model.Card7Text1</p>
+                        @CMSHelpers.CMSEditorSimple("Card7Text1", Model.Card7Text1)
+                        <p class="card-text"><small class="text-muted cmsdisplay" data-property="Card7Text2">@Model.Card7Text2</small> <i class="fa fa-arrow-right"></i> </p>
+                        @CMSHelpers.CMSEditorSimple("Card7Text2", Model.Card7Text2)
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="container-fluid contact">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <h1 class="mb-5 mt-5 text-center">Contact Us</h1>
+            </div>
+            <div class="col-sm-12 col-md-6 mb-5">
+                <iframe id="map" frameborder="0"
+                        src="https://www.google.com/maps/embed/v1/place?q=place_id:ChIJhdwQ2sBNDW0RQN-iQ2HvAAU&key=AIzaSyCIgYG0-QeMlSLwwqiKGdWn3-yyaMkfD2o" allowfullscreen></iframe>
+                <iframe class="googlemaps scrolloff" src="http://www.citymaps.ie/create-google-map/map.php?width=100%&amp;height=NaN&amp;hl=en&amp;q=Manukau%2C%20Auckland+(Million%20Bokeh%20Photographer's%20Association)&amp;ie=UTF8&amp;t=&amp;z=15&amp;iwloc=A&amp;output=embed" frameborder="0" scrolling="no" marginheight="0" marginwidth="0"><a href="http://www.mapsdirections.info/fr/mesurer-distance-surface-google-maps.html"></a></iframe>
+            </div>
+            <div class="col-sm-12 col-md-6 mb-5 address-info">
+                <p>
+                    <b> Phone:</b> <a href="tel:@Model.ContactPhone"><span class="cmsdisplay" data-property="ContactPhone">@Model.ContactPhone</span></a>
+                    @CMSHelpers.CMSEditorSimple("ContactPhone", Model.ContactPhone)
+                </p>
+                <p>
+                    <b>Email:</b>  <a href="mailto:@Model.ContactMail"><span class="cmsdisplay" data-property="ContactMail">@Model.ContactMail</span> </a>
+                    @CMSHelpers.CMSEditorSimple("ContactMail", Model.ContactMail)
+                </p>
+                @*Example address*@
+                <address> <b>Address: </b><span class="cmsdisplay" data-property="ContactAddress">@Model.ContactAddress</span> </address>
+                @CMSHelpers.CMSEditorSimple("ContactAddress", Model.ContactAddress)
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@if ((MillionBokeh.Models.Utilities.IsUserAdmin(User)))
+{
+    <script src="~/Scripts/CMSScript.js"></script>
+
+    <script>
+        $(function () {
+            InitialiseCMS("0", "@ViewBag.EditUrl", "/Home/UploadImage/", "/images/Site/");
+        });
+    </script>
+}

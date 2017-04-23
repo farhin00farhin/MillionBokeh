@@ -1,0 +1,264 @@
+﻿@using MillionBokeh.Models
+@model MillionBokeh.ViewModels.MembersIndexViewModel
+
+@using MillionBokeh.Controllers
+@{
+    ((MembersController)this.ViewContext.Controller).SetViewBagCurrentMenu();
+}
+
+@*Don't show admin fucntionality on find a photographer page*@
+@if (Utilities.IsUserAdmin(User) && !(!string.IsNullOrWhiteSpace(ViewBag.FindPhotographer) && Convert.ToBoolean(ViewBag.FindPhotographer)))
+{
+    <div class="container wow fadeIn justify-content-center mt-5">
+        <div class="row">
+            <div class="col">
+                <div class="alert alert-warning" role="alert">
+                    <form method="post" action="/members/CreateAdminUser">
+                        @Html.AntiForgeryToken()
+                        <input type="submit" class="btn btn-secondary" value="Click here"> to add a new admin user.
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+<!-- Members list -->
+
+<section class="container-fluid">
+    <div class="row no-gutters">
+        <div class="col">
+            <div class="member-list">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-12 col-md-2 mt-4 mt-md-0 search wow fadeInDown">
+                            <i class="fa fa-search fa-2x open-search"><span>Search</span></i>
+                        </div>
+                        @if (!string.IsNullOrWhiteSpace(ViewBag.FindPhotographer) && Convert.ToBoolean(ViewBag.FindPhotographer))
+                        {
+                            // only show range if find a photographer mode is on.
+                            <div class="col">
+                                <form action="" method="get">
+                                    <div class="month-picker">
+                                        <fieldset class="month-picker-fieldset">
+                                            <input type="submit" name="range" value="0" id="all">
+                                            <label for="all" class="month-picker-label wow fadeInDown text-capitalize @(ViewBag.Range <= 0 ? "selected" : "")">Any</label>
+                                            <input type="submit" name="range" value="1" id="range1">
+                                            <label data-wow-delay=".25s" for="range1" class="month-picker-label text-lowercase wow fadeInRight @(ViewBag.Range == 1 ? "selected" : "")">$0 - $30/hour</label>
+                                            <input type="submit" name="range" value="2" id="range2">
+                                            <label data-wow-delay=".45s" for="range2" class="month-picker-label text-lowercase wow fadeInRight @(ViewBag.Range == 2 ? "selected" : "")">$30 - $60/hour</label>
+                                            <input type="submit" name="range" value="3" id="range3">
+                                            <label data-wow-delay=".65s" for="range3" class="month-picker-label text-lowercase wow fadeInRight @(ViewBag.Range == 3 ? "selected" : "")">$60 - $150/hour</label>
+                                            <input type="submit" name="range" value="4" id="range4">
+                                            <label data-wow-delay=".85s" for="range4" class="month-picker-label text-lowercase wow fadeInRight @(ViewBag.Range == 4 ? "selected" : "")">$150+/hour</label>
+                                        </fieldset>
+                                    </div>
+                                    <input type="hidden" name="findphotographer" value="@ViewBag.FindPhotographer">
+                                </form>
+                            </div>
+                            <div class="button-group">
+                                <form action="" method="get" id="region-form">
+                                    
+                                    <div class="dropdown">
+                                        <button class="btn btn-sm btn-danger dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                            Search By Region
+                                        </button>
+                                        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                            @foreach (var location in Model.Locations)
+                                            {
+                                                <li><a href="#" class="" data-value="@location.Id" tabIndex="-1"><input type="checkbox" name="regions" value="@location.Id" />&nbsp;@location.Name</a></li>
+                                            }
+                                            <li>
+                                                <input type="hidden" name="findphotographer" value="@ViewBag.FindPhotographer">
+                                                <input type="submit" class="btn btn-sm  btn-danger pull-right" value="Search">
+                                            </li>
+                                        </ul>
+                                    </div>
+                                    
+                                </form>
+                            </div>
+
+                            if (ViewBag.Locations != null && Model.Users.Any())
+                            {
+                                <div class="col-xl-12">
+                                    <div id="map" style="width: 500px; height: 400px;"></div>
+                                </div>
+
+                                <script>
+                                    var locations = [
+
+                                        @Html.Raw(ViewBag.LocationsToDisplay)
+                                        
+                                    ];
+
+                                    var map = new google.maps.Map(document.getElementById('map'), {
+                                        zoom: 5,
+                                        center: new google.maps.LatLng(-41.049567, 173.1376561),
+                                        mapTypeId: google.maps.MapTypeId.ROADMAP
+                                    });
+
+                                    var infowindow = new google.maps.InfoWindow();
+
+                                    var marker, i;
+
+                                    for (i = 0; i < locations.length; i++) {
+                                        marker = new google.maps.Marker({
+                                            position: new google.maps.LatLng(locations[i][1], locations[i][2]),
+                                            map: map
+                                        });
+
+                                        google.maps.event.addListener(marker, 'click', (function (marker, i) {
+                                            return function () {
+                                                infowindow.setContent(locations[i][0]);
+                                                infowindow.open(map, marker);
+                                            }
+                                        })(marker, i));
+                                    }
+
+                                </script>
+                            }
+
+                        }
+                        else
+                        {
+                            <div class="month-picker">
+                                <fieldset class="month-picker-fieldset">
+                                    <a href="/members/index"><label data-wow-delay=".25s" class="month-picker-label  wow fadeInRight">Member List</label></a>
+                                    <a href="/members/benefits"><label data-wow-delay=".45s" class="month-picker-label  wow fadeInRight">Member Benefits</label></a>
+                                    <a href="/members/renew"><label data-wow-delay=".65s" class="month-picker-label  wow fadeInRight">Renew Membership</label></a>
+                                    <a href="/members/refer"><label data-wow-delay=".85s" class="month-picker-label  wow fadeInRight">Buy membership</label></a>
+
+                                </fieldset>
+                            </div>
+                        }
+
+                    </div>
+
+                    <div class="member-wrapper">
+                        <div class="wow fadeIn" data-wow-delay="1s">
+                            @if (Model.Users.Count() <= 0)
+                            {
+                                <div class="alert alert-danger" role="alert">
+                                    Sorry, there is no one that meets your search criteria. Please try again.
+                                </div>
+                            }
+
+                            else if (!string.IsNullOrWhiteSpace(ViewBag.Term))
+                            {
+                                <div class="alert alert-info search-notification" role="alert">
+                                    Your search returned <strong>@ViewBag.TotalNum</strong> results.
+                                </div>
+                            }
+
+                        </div>
+
+
+                        <div class="row justify-content-start">
+
+                            @foreach (var item in Model.Users)
+                            {
+                                <div class="col-md-4 col-12 col-sm-6 wow zoomInDown" data-wow-delay="1s">
+                                    <div class="card mb-4">
+                                        <a href="/members/details?id=@item.Id">
+                                            <img class="card-img-top img-thumbnail rounded-circle img-fluid" src="/images/memberphotos/profile/@item.Image" alt="Member profile Image">
+                                        </a>
+
+                                        <div class="card-footer">
+                                            <a href="/members/details?id=@item.Id">
+                                                <small class="text-muted">@item.Name</small>
+                                            </a>
+                                            <div class="pull-right">
+                                                <a href="tel:@item.PhoneNumber">Call: @item.PhoneNumber</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+
+
+                        @if (Model.Users.Any())
+                        {
+                            <div class="row">
+                                <div class="col ">
+                                    <nav aria-label="Page navigation example">
+                                        <ul class="pagination wow fadeInRight">
+                                            <li class="page-item @ViewBag.PreviousPageDisabled"><a class="page-link" href="@string.Format(ViewBag.PageNumberUrl, ViewBag.PreviousPage)">Previous</a></li>
+                                            @for (int i = 1; i <= (Math.Ceiling((double)(ViewBag.TotalNum / 9.0))); i++)
+                                            {
+                                                <li class="page-item @((Convert.ToInt32(ViewBag.CurrentPage) == i) ? "active" : "")"><a class="page-link" href="@string.Format(ViewBag.PageNumberUrl, i)">@i</a></li>
+                                            }
+                                            <li class="page-item @ViewBag.NextPageDisabled"><a class="page-link" href="@string.Format(ViewBag.PageNumberUrl, ViewBag.NextPage)">Next</a></li>
+                                        </ul>
+                                    </nav>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Search overlay -->
+<div class="overlay">
+    <a class="closebtn"><i class="fa fa-times"></i></a>
+    <div class="overlay-content">
+        <form action="" method="get">
+            <div id="search-elements-div">
+                <input type="search" name="term" placeholder="Search" class="search-input" list="suggestions">
+                <input type="hidden" name="category" value="@ViewBag.Range">
+                <input type="hidden" name="pagenumber" value="1">
+                <input type="hidden" name="findphotographer" value="@ViewBag.FindPhotographer">
+                <datalist id="suggestions"></datalist>
+                <input type="submit" class="button search-button visually-hidden" value="Search">
+            </div>
+        </form>
+    </div>
+</div>
+
+<script src="~/Scripts/autocompleteScript.js"></script>
+
+
+
+<script>
+
+    var options = [];
+
+    $('.dropdown-menu a').on('click', function (event) {
+
+        var $target = $(event.currentTarget),
+            val = $target.attr('data-value'),
+            $inp = $target.find('input'),
+            idx;
+
+        if ((idx = options.indexOf(val)) > -1) {
+            options.splice(idx, 1);
+            setTimeout(function () { $inp.prop('checked', false) }, 0);
+        } else {
+            options.push(val);
+            setTimeout(function () { $inp.prop('checked', true) }, 0);
+        }
+
+        $(event.target).blur();
+
+        console.log(options);
+        return false;
+    });
+
+</script>
+
+
+<script>
+
+    $(".search-input").keyup(function () {
+        AutoComplete($(this).val(), "/members/AutoComplete");
+    });
+
+</script>
+
+
+
+
+

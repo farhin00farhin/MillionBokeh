@@ -1,0 +1,78 @@
+﻿@using System.Web.Mvc
+
+@helper CMSEditorSimple(string dataproperty, string value, string propertyType = "text")
+{
+    <input type="@propertyType" class="cmseditor" data-property="@dataproperty" value="@value" />
+    <button class="button btn-primary cmsupdate" data-property="@dataproperty">Save</button>
+}
+
+@helper CMSEditorHidden(string dataproperty, string value)
+{
+    <input type="hidden" class="cmseditor" data-property="@dataproperty" value="@value" />
+    <button class="button btn-primary cmsupdate" data-property="@dataproperty">Save</button>
+}
+
+@helper CMSEditorImage(string propertyName = "Image")
+{
+    <input type="file" data-property="@propertyName" class="cmseditor image" />
+}
+
+@helper CMSAddGalleryImage(string propertyName = "GalleryImage")
+{
+    <div class="container wow fadeIn mt-5 justify-content-center">
+        <div class="row">
+            <div class="col">
+                <div class="alert alert-warning" role="alert">
+                    <strong>Upload an image to your portfolio.</strong>
+                    <input type="file" data-property="@propertyName" class="cmseditor galleryupload" />
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@helper CMSEditorLarge(string dataproperty, string value)
+{
+    <textarea rows="4" style="width:100%" class="cmseditor" data-property="@dataproperty">
+        @value
+    </textarea>
+    <button class="button btn-primary cmsupdate" data-property="@dataproperty">Save</button>
+}
+
+@helper CMSEditorTinyMCE(string dataproperty, string value)
+{
+    <div class="tinymce-container cmseditor">
+        <textarea class="cmseditor tinymce" data-property="@dataproperty">@value</textarea>
+        <button class="button btn-primary cmsupdate" data-property="@dataproperty">Save</button>
+    </div>
+}
+
+@helper ShowAdminMessage()
+{
+    <div class="container wow fadeIn mt-5 justify-content-center">
+        <div class="row">
+            <div class="col">
+                <div class="alert alert-success" role="alert">
+                    <strong>You are viewing this page as an administrator.</strong> You may edit the contents of this page.
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@helper ShowMemberEditableMessage(string membershipInfo)
+{
+    <div class="container wow fadeIn mt-5 justify-content-center">
+
+        <div class="row">
+            <div class="col">
+                <div class="alert alert-success" role="alert">
+                    <strong>You are viewing your own member page.</strong> You may edit the contents of this page as you like.
+                    <br />
+                    <br />
+                    <span><b>@membershipInfo</b></span>
+                </div>
+            </div>
+        </div>
+    </div>
+}

@@ -1,0 +1,150 @@
+﻿<form action="" method="post">
+    <section class="container payment">
+        <div class="row">
+            <div class="col-12 mt-5 mb-5">
+                <div class="mb-5">
+                    <h1>Enter your credit card details</h1>
+
+                    <h4 class="pull-right"> Your Total: $@Convert.ToDouble(ViewBag.Total).ToString("0.00")</h4>
+                </div>
+                
+                @if (ViewBag.Debugging != null && ViewBag.Debugging)
+                {
+                <div class="form-group row">
+                    <button id="btn-test-data">Test Data</button>
+                </div>
+                }
+                <div class="form-group row">
+                    <label for="example-text-input" class="col-2 col-form-label">First Name on Card</label>
+                    <div class="col-8 col-lg-5">
+                        <input class="form-control" type="text" id="firstname" name="firstname" value="">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="example-text-input" class="col-2 col-form-label">Last Name on Card</label>
+                    <div class="col-8 col-lg-5">
+                        <input class="form-control" type="text" id="lastname" name="lastname" value="">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="example-text-input" class="col-2 col-form-label">Address Line 1</label>
+                    <div class="col-8 col-lg-5">
+                        <input class="form-control" type="text" id="line1" name="line1" value="">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="example-text-input" class="col-2 col-form-label">City</label>
+                    <div class="col-8 col-lg-5">
+                        <input class="form-control" type="text" id="city" name="city" value="">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="example-text-input" class="col-2 col-form-label">Post Code</label>
+                    <div class="col-8 col-lg-5">
+                        <input class="form-control" type="number" id="postCode" name="postCode" value="">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="example-text-input" class="col-2 col-form-label">Country</label>
+                    <div class="col-8 col-lg-5">
+                        <input class="form-control" type="text" id="country" maxlength="2" name="country" value="NZ">
+                    </div>
+                </div>
+                <input type="hidden" value="@(Guid.NewGuid().ToString("N"))" name="orderNumber" />
+                <input type="hidden" value="@ViewBag.OrderName" name="orderName" />
+                <input type="hidden" value="@ViewBag.Total" name="totalPrice" />
+                <input type="hidden" value="@ViewBag.MembershipOption" name="membershipType" />
+
+
+            </div>
+        </div>
+    </section>
+
+
+    <section class="container">
+        <div class="row">
+            <div class="col-xs-12 col-lg-6">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h1 class="panel-title">
+                            Payment Details
+                        </h1>
+                    </div>
+                    <div class="panel-body mt-5">
+                        <form role="form">
+                            <div class="form-group">
+                                <label for="cardNumber">
+                                    Card Number
+                                </label>
+                                <div class="input-group">
+                                    <input type="text" class="form-control" id="cardNumber" name="cardnumber" value="" placeholder="Valid Card Number" required autofocus />
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="cardtype">
+                                    Card Type
+                                </label>
+                                <div class="input-group">
+                                    <select class="form-control" id="cardtype" required name="type">
+                                        <option value="">- Type of card -</option>
+                                        <option value="visa">Visa</option>
+                                        <option value="mastercard">Mastercard</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-9">
+                                    <div class="form-group">
+                                        <label for="expire_month">
+                                            Expiry Date
+                                        </label>
+                                        <div class="row">
+                                            <div class="col-6 col-md-3">
+                                                <input type="text" class="form-control" id="expire_month" name="expire_month" placeholder="MM" value="" required />
+                                            </div>
+                                            <div class="col-6 col-md-3">
+                                                <input type="text" class="form-control" id="expire_year" name="expire_year" placeholder="YYYY" value="" required />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-3">
+                                    <label for="cvv2">
+                                        CVV2
+                                    </label>
+                                    <input type="password" class="form-control" id="cvv2" name="cvv2" placeholder="CVV2" value="" required />
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <br />
+                <input class="btn btn-success btn-lg btn-block" value="Pay" role="button" type="submit">
+            </div>
+        </div>
+    </section>
+</form>
+
+@if (ViewBag.Debugging != null && ViewBag.Debugging)
+{
+    <script>
+        $(function() {
+            $("#btn-test-data")
+                .click(function() {
+                    $("#firstname").val("Sadia");
+                    $("#lastname").val("Afrin");
+                    $("#line1").val("Templeton Place");
+                    $("#city").val("Auckland");
+                    $("#postCode").val("2103");
+                    $("#country").val("NZ");
+                    $("#cardNumber").val("4370511309717437");
+                    $("#cardtype").val("visa");
+                    $("#expire_month").val("04");
+                    $("#expire_year").val("2022");
+                    $("#cvv2").val("111");
+                    return false;
+                });
+        });
+
+    </script>
+}

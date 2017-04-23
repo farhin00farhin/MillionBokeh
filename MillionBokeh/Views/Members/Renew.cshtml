@@ -1,0 +1,50 @@
+﻿@model MillionBokeh.Models.HomeViewModel
+
+@using MillionBokeh.Controllers
+@{
+    ViewBag.EditUrl = "/home/edit";
+    ViewBag.CurrentMenu = "members";
+    ViewBag.Title = "Renew Membership | Million Bokeh Photographer's Association";
+}
+
+@if ((MillionBokeh.Models.Utilities.IsUserAdmin(User)))
+{
+    using (Html.BeginForm(null, null, FormMethod.Post, new { id = "__AjaxAntiForgeryForm" }))
+    {
+        @Html.AntiForgeryToken()
+    }
+
+    @CMSHelpers.ShowAdminMessage()
+
+}
+
+<div class="container renewal">
+    <h1 class="mt-5 mb-5 wow fadeInDown">Renew your membership here</h1>
+    
+    <div class="wow fadeInDown cmsdisplay mb-5" data-property="RenewText">@Html.Raw(Model.RenewText)</div>
+    @CMSHelpers.CMSEditorTinyMCE("RenewText", Model.RenewText)
+
+    <div class="row wow fadeInLeft mt-5">
+        <div class="col">
+            <a href="/members/confirmmembership" class="btn-primary btn-lg ">Renew membership</a>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <a href="~/Members/" class="btn btn-secondary btn-sm pull-right custom-button wow fadeInRight"><i class="fa fa-arrow-left" aria-hidden="true"></i></a>
+        </div>
+    </div>
+
+</div>
+
+@if ((MillionBokeh.Models.Utilities.IsUserAdmin(User)))
+{
+    <script src="~/Scripts/CMSScript.js"></script>
+
+    <script>
+        $(function() {
+            InitialiseCMS("0", "@ViewBag.EditUrl", "/Home/UploadImage/", "/images/Site/");
+        });
+
+    </script>
+}

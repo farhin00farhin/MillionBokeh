@@ -1,0 +1,121 @@
+﻿@model MillionBokeh.Models.Order
+@using MillionBokeh.Models
+
+@{
+    ViewBag.Title = "Shopping Cart | Million Bokeh Photographer's Association";
+}
+
+
+<section class="container">
+    <h2 class="mt-5">Your Shopping Cart</h2>
+
+    @if (Model.OrderItems.Count() <= 0)
+    {
+
+        <div class="row">
+            <div class="col">
+                <div class="alert alert-danger mt-5" role="alert">
+                    You don't have any items in your cart. <a href="/products"> Click here</a> to continue shopping.
+                </div>
+            </div>
+        </div>
+    }
+    else
+    {
+
+        <form action="/orders/payment" method="get">
+            <div style="overflow-x:auto;">
+                <table id="cart" class="table table-hover table-condensed">
+                    <thead>
+                        <tr>
+                            <th style="width:50%">Product</th>
+                            <th style="width:10%">Price</th>
+                            <th style="width:8%">Quantity</th>
+                            <th style="width:22%" class="text-center">Subtotal</th>
+                            <th style="width:10%"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.OrderItems)
+                        {
+                            <tr>
+                                <td data-th="Product">
+                                    <div class="row">
+                                        <div class="col-sm-4 hidden-xs"><img src="@("/images/" + item.ItemType + "s/" + item.ItemImage)" class="img-fluid" alt="@item.ItemName" /></div>
+                                        <div class="col-sm-8">
+                                            <a href="@string.Format("/{0}s/details?id={1}", @item.ItemType, @item.ItemId)"><h4 class="nomargin">@item.ItemName</h4></a>
+                                            <p>@Html.Raw(item.ItemDescription.Substring(0, (item.ItemDescription.Length > 73 ? 73 : item.ItemDescription.Length)))...</p>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td data-th="Price">@item.ItemPrice.ToString("0.00")</td>
+                                <td data-th="Quantity">
+                                    <input type="number" min="1" max="@item.ItemsAvailable" class="form-control text-center" value="@item.Quantity" data-itemid="@item.ItemId" data-itemtype="@item.ItemType" data-itemprice="@item.ItemPrice">
+                                </td>
+                                <td data-th="Subtotal" id="@(item.ItemType+""+item.ItemId)" class="text-center">@((item.ItemPrice * item.Quantity).ToString("0.00"))</td>
+                                <td class="actions" data-th="">
+                                    <a href="@(string.Format("/orders/deleteitem?itemId={0}&itemtype={1}", item.ItemId, item.ItemType))" class="btn btn-danger btn-sm"><i class="fa fa-trash-o"></i></a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td>
+                                <a href="/products/index" class="btn btn-warning"><i class="fa fa-angle-left"></i> Continue Shopping</a>
+                                @if (Utilities.GetMember(User).MemberType > 1 && Utilities.IsMembershipValid(Utilities.GetMember(User)))
+                                {
+                                    <del class="pull-right" id="total-text">Total $@ViewBag.Total.ToString("0.00")</del>
+                                }
+                            </td>
+                            <td colspan="2" class="hidden-xs">
+                                @if (Utilities.GetMember(User).MemberType == 2 && Utilities.IsMembershipValid(Utilities.GetMember(User)))
+                                {
+                                    <strong class="pull-right">Discount 8%</strong>
+                                }
+                                else if (Utilities.GetMember(User).MemberType == 3 && Utilities.IsMembershipValid(Utilities.GetMember(User)))
+                                {
+                                    <strong class="pull-right">Discount 12%</strong>
+                                }
+                            </td>
+                            <td class="hidden-xs text-center">
+                                <strong class="" id="discounted-total-text">Total $@ViewBag.DiscountedPrice.ToString("0.00")</strong>
+                            </td>
+                            <td>
+                                <input type="submit" class="btn btn-success btn-block" value="Checkout" />
+                            </td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </form>
+        <script>
+            $("input[type=number]").bind('keydown input', function (e) {
+                $this = $(this);
+                $.get("/orders/UpdateItem?itemId=" + $(this).data("itemid") + "&itemtype=" + $(this).data("itemtype") + "&quantity=" + $(this).val(), function (data) {
+                    var totalData = JSON.parse(data);
+                    if (totalData.error) {
+                       
+                    } else {
+                        $("#total-text").text("Total $" + totalData.total);
+                        $("#discounted-total-text").text("Total $" + totalData.discountedTotal);
+                        $("#" + $this.data("itemtype") + "" + $this.data("itemid")).text(totalData.subTotal);
+                    }
+                });
+
+            });
+
+            $("input[type=number]").click(function () {
+                if ($(this).attr("max")) {
+                    var currentVal = parseInt($(this).val());
+                    var maxVal = parseInt($(this).attr("max"));
+
+                    if (currentVal >= maxVal) {
+                        alert("There are no more items in stock.");
+                    }
+                }
+            });
+        </script>
+    }
+</section>
+

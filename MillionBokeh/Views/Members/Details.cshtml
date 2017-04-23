@@ -1,0 +1,185 @@
+﻿@using MillionBokeh.Models
+@using MillionBokeh.Controllers
+@model MillionBokeh.Models.AspNetUser
+
+@{
+    ViewBag.EditUrl = "/members/edit";
+    ViewBag.CurrentMenu = "members";
+    ViewBag.Title = "Member's Profile | Million Bokeh Photographer's Association";
+}
+@if ((MillionBokeh.Models.Utilities.GetLoggedInUserId(User)).ToLower() == Model.Id.ToLower())
+{
+    using (Html.BeginForm(null, null, FormMethod.Post, new { id = "__AjaxAntiForgeryForm" }))
+    {
+        @Html.AntiForgeryToken()
+    }
+
+    @CMSHelpers.ShowMemberEditableMessage(@ViewBag.MembershipInfo)
+
+    <script>
+        function allowDrop(ev) {
+            ev.preventDefault();
+        }
+
+        function drag(ev) {
+            ev.dataTransfer.setData("photoid", ev.target.id);
+        }
+
+        function drop(ev) {
+            ev.preventDefault();
+            var photoid = ev.dataTransfer.getData("photoid");
+            var form = $('#__AjaxAntiForgeryForm');
+            var token = $('input[name="__RequestVerificationToken"]', form).val();
+
+            $.ajax({
+                url: "/members/DeleteGalleryImage",
+                type: 'POST',
+                data: {
+                    __RequestVerificationToken: token,
+                    id: photoid
+                },
+                success: function (result) {
+                    $("#" + photoid).closest(".thumb").remove();
+                }
+            });
+
+        }
+    </script>
+
+    <div class="cmsdeletearea wow fadeInDown" data-wow-delay="2.5s" ondrop="drop(event)" ondragover="allowDrop(event)">
+        <i class="fa fa-trash-o" aria-hidden="true"></i>
+        <p>Drag your photos here to remove them from your portfolio</p>
+    </div>
+}
+
+@if (Utilities.IsUserAdmin(User))
+{
+
+    <div class="container wow fadeIn justify-content-center mt-5">
+        @if (!string.IsNullOrWhiteSpace(ViewBag.PermissionChanged))
+        {
+            <div class="row">
+                <div class="col">
+                    <div class="alert alert-success" role="alert">
+                        @ViewBag.PermissionChanged
+                    </div>
+                </div>
+            </div>
+        }
+
+        <div class="row">
+            <div class="col">
+                <div class="alert alert-warning" role="alert">
+                    @if (ViewBag.IsMemberAdmin != null && Convert.ToBoolean(ViewBag.IsMemberAdmin))
+                {
+                        <form method="post" action="/account/RemoveAdminUser">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="userid" value="@Model.Id">
+                            <input type="submit" class="btn btn-secondary btn-danger" value="Click here"> to remove this user as admin.
+                        </form>
+                    }
+                    else
+                    {
+                        <form method="post" action="/account/MakeAdminUser">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="userid" value="@Model.Id">
+                            <input type="submit" class="btn btn-secondary" value="Click here"> to make this user a volunteer admin.
+                        </form>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+<div class="container">
+    
+    <!-- Member Information Section -->
+    <section class="row m-5">
+        <div class="col-12 col-md-6 col-lg-4">
+            <img id="member-image" class="img-fluid rounded-circle wow fadeInLeft cmsdisplay" data-property="Image" src="~/images/MemberPhotos/profile/@Model.Image" alt="@Model.Name"/>
+            @CMSHelpers.CMSEditorImage()
+        </div>
+        <div class="col-lg-8 col-md-6 col-12 mt-5 text-center text-md-left wow fadeInRight">
+            <div class="row">
+                <div class="col-6">
+                    <h1 class="cmsdisplay" data-property="Name">@Model.Name</h1>
+                    @CMSHelpers.CMSEditorSimple("Name", Model.Name)
+                </div>
+
+            </div>
+            <span class="cmsdisplay" data-property="Description">@Model.Description</span>
+            @CMSHelpers.CMSEditorLarge("Description", Model.Description)
+
+            <div class="mt-3">
+                <b>Phone:</b><span class="cmsdisplay" data-property="PhoneNumber"> <a href="tel:@Model.PhoneNumber">@Model.PhoneNumber</a></span>
+                @CMSHelpers.CMSEditorSimple("PhoneNumber", Model.PhoneNumber)
+            </div>
+            <div class="mt-3">
+                <span><b>Photography Charge: </b></span><span class="cmsdisplay" data-property="RangeId">@(Model.RangeId.HasValue && Model.RangeId > 0 ? Model.Ranx.Name : "I am not available for commercial photography")</span>
+                <select id="rangeoption" class="cmspicker" data-property="RangeId">
+                    <option value="" @(!Model.RangeId.HasValue || Model.RangeId == 0 ? "selected = 'selected'" : "")>I'm not a photographer</option>
+                    <option value="1" @(Model.RangeId.HasValue && Model.RangeId == 1 ? "selected = 'selected'" : "")>$0 - $30/hour</option>
+                    <option value="2" @(Model.RangeId.HasValue && Model.RangeId == 2 ? "selected = 'selected'" : "")>$30 - $60/hour</option>
+                    <option value="3" @(Model.RangeId.HasValue && Model.RangeId == 3 ? "selected = 'selected'" : "")>$60 - $150/hour</option>
+                    <option value="4" @(Model.RangeId.HasValue && Model.RangeId == 4 ? "selected = 'selected'" : "")>$150+/hour</option>
+                </select>
+                @CMSHelpers.CMSEditorHidden("RangeId", Model.RangeId == null ? "" : Model.RangeId.ToString())
+
+
+            </div>
+        </div>
+    </section>
+    
+    <!-- Member Gallery Section -->
+    <section class="row text-center wow fadeIn" data-wow-delay="1.5s">
+        @if (Model.Photos.Count > 0)
+        {
+            <div class="col-lg-12 mb-5">
+                <h1 class="page-header">Photos I've taken</h1>
+            </div>
+        }
+        @foreach (var item in Model.Photos)
+        {
+            <div class="col-md-4 col-xs-6 thumb">
+                <a class="thumbnail" href="#" data-full-photo-src="/images/MemberPhotos/gallery/full/@item.PhotoPath">
+                    <img id="@item.PhotoId" draggable="true" ondragstart="drag(event)" class="img-fluid" src="~/images/MemberPhotos/gallery/thumbnail/@item.PhotoPath" alt="Gallery Image Thumbnail">
+                </a>
+            </div>
+        }
+    </section>
+    @if ((MillionBokeh.Models.Utilities.GetLoggedInUserId(User)).ToLower() == Model.Id.ToLower())
+    {
+        @CMSHelpers.CMSAddGalleryImage()
+
+    }
+    
+    <!-- Full size image overlay-->
+    <div class="overlay">
+        <a class="closebtn"><i class="fa fa-times"></i></a>
+        <div class="overlay-content">
+            <div class="container">
+                <div class="row">
+                    <div class="col">
+                        <img class="img-fluid" src="" alt="Full sized gallery image">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@if ((MillionBokeh.Models.Utilities.GetLoggedInUserId(User)).ToLower() == Model.Id.ToLower())
+{
+    <script src="~/Scripts/CMSScript.js"></script>
+
+    <script>
+
+        $(function () {
+            InitialiseCMS("@(Model.Id)", "@ViewBag.EditUrl", "/Members/UploadImage/", "/images/MemberPhotos/profile/");
+        });
+
+
+    </script>
+}

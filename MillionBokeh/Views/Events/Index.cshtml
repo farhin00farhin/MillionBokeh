@@ -1,0 +1,141 @@
+﻿@model IEnumerable<MillionBokeh.Models.Event>
+
+@{
+    ViewBag.Title = "Events | Million Bokeh Photographer's Association";
+}
+
+
+
+@if ((MillionBokeh.Models.Utilities.IsUserAdmin(User)))
+{
+    @CMSHelpers.ShowAdminMessage()
+
+    <div class="container wow fadeIn justify-content-center">
+        <div class="row">
+            <div class="col">
+                <div class="alert alert-warning" role="alert">
+                    <form method="post" action="/events/create">
+                        @Html.AntiForgeryToken()
+                        <input type="submit" class="btn btn-secondary" value="Click here"> to add a new event.
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+<div class="container">
+    <section class="row">
+        <div class="col-12 search col-lg-2 mt-5 mt-lg-0 wow fadeInDown">
+            <i class="fa fa-search fa-2x open-search"><span>Search</span></i>
+        </div>
+        <div class="col">
+            <form action="" method="get">
+                <div class="month-picker">
+                    <fieldset class="month-picker-fieldset">
+                        <input type="submit" name="month" value="0" id="all">
+                        <label for="all" class="month-picker-label wow fadeInRight @(ViewBag.Month <= 0 ? "selected" : "")">All</label>
+                        <input type="submit" name="month" value="1" id="jan">
+                        <label data-wow-delay=".25s" for="jan" class="month-picker-label wow fadeInRight @(ViewBag.Month == 1 ? "selected" : "")">Jan</label>
+                        <input type="submit" name="month" value="2" id="feb">
+                        <label data-wow-delay=".45s" for="feb" class="month-picker-label wow fadeInRight @(ViewBag.Month == 2 ? "selected" : "")">Feb</label>
+                        <input type="submit" name="month" value="3" id="mar">
+                        <label data-wow-delay=".65s" for="mar" class="month-picker-label wow fadeInRight @(ViewBag.Month == 3 ? "selected" : "")">Mar</label>
+                        <input type="submit" name="month" value="4" id="apr">
+                        <label data-wow-delay=".85s" for="apr" class="month-picker-label wow fadeInRight @(ViewBag.Month == 4 ? "selected" : "")">Apr</label>
+                        <input type="submit" name="month" value="5" id="may">
+                        <label data-wow-delay="1.05s" for="may" class="month-picker-label wow fadeInRight @(ViewBag.Month == 5 ? "selected" : "")">May</label>
+                        <input type="submit" name="month" value="6" id="jun">
+                        <label data-wow-delay="1.25s" for="jun" class="month-picker-label wow fadeInRight @(ViewBag.Month == 6 ? "selected" : "")">Jun</label>
+                        <input type="submit" name="month" value="7" id="jul">
+                        <label data-wow-delay="1.45s" for="jul" class="month-picker-label wow fadeInRight @(ViewBag.Month == 7 ? "selected" : "")">Jul</label>
+                        <input type="submit" name="month" value="8" id="aug">
+                        <label data-wow-delay="1.65s" for="aug" class="month-picker-label wow fadeInRight @(ViewBag.Month == 8 ? "selected" : "")">Aug</label>
+                        <input type="submit" name="month" value="9" id="sep">
+                        <label data-wow-delay="1.85s" for="sep" class="month-picker-label wow fadeInRight @(ViewBag.Month == 9 ? "selected" : "")">Sep</label>
+                        <input type="submit" name="month" value="10" id="oct">
+                        <label data-wow-delay="2.05s" for="oct" class="month-picker-label wow fadeInRight @(ViewBag.Month == 10 ? "selected" : "")">Oct</label>
+                        <input type="submit" name="month" value="11" id="nov">
+                        <label data-wow-delay="2.25s" for="nov" class="month-picker-label wow fadeInRight @(ViewBag.Month == 11 ? "selected" : "")">Nov</label>
+                        <input type="submit" name="month" value="12" id="dec">
+                        <label data-wow-delay="2.45s" for="dec" class="month-picker-label wow fadeInRight @(ViewBag.Month == 12 ? "selected" : "")">Dec</label>
+                    </fieldset>
+                </div>
+            </form>
+        </div>
+    </section>
+    <section class="row">
+        <div class="col">
+
+            @if (!Model.Any())
+            {
+                <div class="alert alert-danger" role="alert">
+                    Sorry, there are no events scheduled that meet your search criteria. Please try again.
+                </div>
+            }
+
+            <ul class="list-unstyled margin-around">
+                @foreach (var item in Model)
+                {
+                    <li class="media mt-5 wow fadeInDown" data-wow-delay="2s">
+                        <a href="/events/details?id=@item.EventID">
+                            <div class="d-flex mr-3 event-date">
+                                <div class="circle-date rounded-circle">
+                                    <p class="align-middle">
+                                        @item.StartDate.ToString("MMM, dd")<br /> @item.StartDate.ToString("yyyy")
+                                    </p>
+                                </div>
+                            </div>
+                        </a>
+                        <div class="media-body">
+                            <a href="/events/details?id=@item.EventID">
+                                <h2 class="mt-0 mb-1">@item.Name</h2>
+                            </a>
+                            @Html.Raw(item.Description.Substring(0, (item.Description.Length > 200 ? 200 : item.Description.Length)))...
+                            <a href="/events/details?id=@item.EventID" class="btn btn-secondary btn-sm pull-right custom-button"> Learn more...</a>
+                        </div>
+                    </li>
+                }
+            </ul>
+        </div>
+
+    </section>
+    @if (Model.Any())
+    {
+        <div class="row mt-5">
+            <div class="col">
+                <nav aria-label="Page navigation example">
+                    <ul class="pagination wow slideInRight">
+                        <li class="page-item @ViewBag.PreviousPageDisabled"><a class="page-link" href="@string.Format(ViewBag.PageNumberUrl, ViewBag.PreviousPage)">Previous</a></li>
+                        @for (int i = 1; i <= (Math.Ceiling((double)(ViewBag.TotalNum / 9.0))); i++)
+                        {
+                            <li class="page-item @((Convert.ToInt32(ViewBag.CurrentPage) == i) ? "active" : "")"><a class="page-link" href="@string.Format(ViewBag.PageNumberUrl, i)">@i</a></li>
+                        }
+                        <li class="page-item @ViewBag.NextPageDisabled"><a class="page-link" href="@string.Format(ViewBag.PageNumberUrl, ViewBag.NextPage)">Next</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    }
+</div>
+<div class="overlay">
+    <a class="closebtn"><i class="fa fa-times"></i></a>
+    <div class="overlay-content">
+        <form action="" method="get">
+            <div id="search-elements-div">
+                <input type="search" name="term" placeholder="Search" class="search-input" list="suggestions">
+                <datalist id="suggestions"></datalist>
+                <input type="submit" class="button search-button visually-hidden" value="Search">
+            </div>
+        </form>
+    </div>
+</div>
+
+<script src="~/Scripts/autocompleteScript.js"></script>
+
+<script>
+    $(".search-input").keyup(function () {
+        AutoComplete($(this).val(), "/events/AutoComplete");
+    });
+
+</script>

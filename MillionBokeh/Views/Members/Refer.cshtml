@@ -1,0 +1,99 @@
+﻿@model MillionBokeh.Models.HomeViewModel
+
+@using MillionBokeh.Controllers
+@{
+    ViewBag.EditUrl = "/home/edit";
+    ViewBag.CurrentMenu = "members";
+}
+@if ((MillionBokeh.Models.Utilities.IsUserAdmin(User)))
+{
+    using (Html.BeginForm(null, null, FormMethod.Post, new { id = "__AjaxAntiForgeryForm" }))
+    {
+        @Html.AntiForgeryToken()
+    }
+
+    @CMSHelpers.ShowAdminMessage()
+
+    <div class="container wow fadeIn justify-content-center">
+        <div class="row">
+            <div class="col">
+                <div class="alert alert-warning" role="alert">
+                    Please <button id="disable-links" class="btn btn-secondary btn-sm">click here</button> to disable links before you attempt to edit the content.
+                    <a id="enable-links" href="/members/refer" class="btn btn-secondary btn-sm">Refresh</a> the page to enable the links again.
+                </div>
+            </div>
+        </div>
+    </div>
+        <script>
+            $(function () {
+                $("a:has(.cmsdisplay), .cmsdisplay").addClass("stopedit");
+
+                $("#disable-links").click(function (e) {
+                    alert("Links have been disabled for editing");
+                    $(".stopedit").removeClass("stopedit");
+
+                    $("a").not("#enable-links").click(function (e) {
+                        e.preventDefault();
+                    });
+                });
+            });
+        </script>
+}
+<section class="container refer">
+    <div class="row">
+        <div class="col-12">
+            <form action="/" method="post">
+                <h1 class="mt-5 wow fadeInDown">Join Now</h1>
+
+                <div class="row">
+
+                    <div class="col-6 wow fadeInLeft" data-wow-delay=".5s">
+                        <a href="/members/confirmmembership?membershipType=3">
+                            <div class="card">
+                                <div class="card-block">
+                                    <h4 class="card-title">Full Membership</h4>
+                                    <h6 class="card-subtitle mb-2 text-muted">$300.00/year ($25/month)</h6>
+                                    <p class="card-text mt-5 mb-5 cmsdisplay" data-property="FullMembershipText">@Model.FullMembershipText</p>
+                                    @CMSHelpers.CMSEditorLarge("FullMembershipText", Model.FullMembershipText)
+                                </div>
+                            </div>
+                        </a>
+
+                    </div>
+                    <div class="col-6 wow fadeInRight" data-wow-delay=".5s">
+                        <a href="/members/confirmmembership?membershipType=2">
+                            <div class="card">
+                                <div class="card-block">
+                                    <h4 class="card-title">Associate Membership</h4>
+                                    <h6 class="card-subtitle mb-2 text-muted">$180.00/year ($15/month)</h6>
+                                    <p class="card-text mt-5 mb-5 cmsdisplay" data-property="AssociateMembershipText">@Model.AssociateMembershipText</p>
+                                    @CMSHelpers.CMSEditorLarge("AssociateMembershipText", Model.AssociateMembershipText)
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </form>
+        </div>
+      
+    </div>
+    <div class="row">
+        <div class="col">
+            <a href="~/Members/" class="btn btn-primary btn-sm custom-button wow fadeInRight mt-5 pull-right"><i class="fa fa-arrow-left" aria-hidden="true"></i></a>
+        </div>
+    </div>
+</section>
+
+
+
+@if ((MillionBokeh.Models.Utilities.IsUserAdmin(User)))
+{
+    <script src="~/Scripts/CMSScript.js"></script>
+
+    <script>
+        $(function() {
+            InitialiseCMS("0", "@ViewBag.EditUrl", "/Home/UploadImage/", "/images/Site/");
+        });
+
+    </script>
+}

@@ -1,0 +1,276 @@
+﻿@using MillionBokeh.Models
+@model AuthenticationInfoViewModel
+@{
+    ViewBag.Title = "Log in/Sign up";
+}
+
+<div class="login-form">
+
+    @if ((ViewBag.LoginError != null && ViewBag.LoginError))
+    {
+        <div class="alert alert-danger" role="alert">
+            <strong>Login unsuccessful. </strong> Please try again.
+        </div>
+    }
+    
+    <!-- The tabs -->
+    <ul class="tab-group">
+        <li class="tab @(!(ViewBag.Login != null && ViewBag.Login) ? "active" : "")"><a href="#signup">Sign Up</a></li>
+        <li class="tab @(ViewBag.Login != null && ViewBag.Login ? "active" : "")"><a href="#login">Log In</a></li>
+    </ul>
+
+    <div class="tab-content">
+        
+        <!-- The sign up form -->
+        <div id="signup" style="display: @(!(ViewBag.Login != null && ViewBag.Login) ? "block" : "none");">
+            @if ((ViewBag.IsRegisteringAdmin != null && ViewBag.IsRegisteringAdmin))
+            {
+                <h1>Register new Administrator</h1>
+            }
+            else
+            {
+                <h1>Sign Up for Free</h1>
+            }
+            @Html.ValidationSummary("", new {@class = "text-danger"})
+
+            @if ((ViewBag.IsRegisteringAdmin != null && ViewBag.IsRegisteringAdmin))
+            {
+                <!-- The new admin registration form -->
+                <form action="/account/registerAdmin" method="post" id="signUpForm">
+                    @Html.AntiForgeryToken()
+                    <div class="field-wrap">
+                        <input type="email" name="Email" placeholder="Email Address *" required autocomplete="off"/>
+                    </div>
+
+                    <div class="field-wrap">
+                        <input type="password" name="Password" placeholder="Set A Password *" required autocomplete="off"/>
+                    </div>
+                    <input type="submit" value="Sign up" class="button button-block mt-5">
+
+                </form>
+            }
+            else
+            {
+                <!-- The new user/member sign up form -->
+                <form action="/account/register" method="post" id="signUpForm" enctype="multipart/form-data">
+
+                    @Html.AntiForgeryToken()
+
+                    <div class="field-wrap">
+                        <input type="text" name="FirstName" placeholder="First Name *" required autocomplete="off" value="@Model.FirstName" />
+                    </div>
+
+                    <div class="field-wrap">
+                        <input type="text" name="LastName" placeholder="Last Name *" required autocomplete="off" value="@Model.LastName"/>
+                    </div>
+
+                    <div class="field-wrap">
+                        <input type="email" name="Email" placeholder="Email Address *" required autocomplete="off" value="@Model.Email"/>
+                    </div>
+
+                    <div class="field-wrap">
+                        <input type="password" name="Password" placeholder="Set A Password *" required autocomplete="off" value="@Model.Password"/>
+                    </div>
+
+                    <div class="field-wrap">
+                        <select required name="MembershipType" id="MembershipType">
+                            <option value="">- Membership type - *</option>
+                            <option value="0" @(Model.MembershipType.HasValue && Model.MembershipType.Value == 0 ? "selected" : "")>None</option>
+                            <option value="3" @(Model.MembershipType.HasValue && Model.MembershipType.Value == 3 ? "selected" : "")>Full ($300/year)</option>
+                            <option value="2" @(Model.MembershipType.HasValue && Model.MembershipType.Value == 2 ? "selected" : "")>Associate ($180/year)</option>
+                        </select>
+                    </div>
+
+
+                    <div class="field-wrap">
+                        <input type="text" name="PhoneNumber" placeholder="Phone *" required autocomplete="off"  value="@Model.PhoneNumber"/>
+
+                    </div>
+
+                    <div class="field-wrap">
+                        <textarea rows="4" cols="50" name="Profile" placeholder="Profile" form="signUpForm"  value="@Model.Profile"></textarea>
+                    </div>
+
+                    <div class="field-wrap">
+                        <input type="file" name="ImageAttachment" id="ImageAttachment"  value="@Model.ImageAttachment"/>
+                    </div>
+
+
+                    <div class="field-wrap">
+                        <select required name="RangeId" id="RangeId">
+                            <option value="">- Photography Fee - *</option>
+                            <option value="" @(Model.RangeId == 0 ? "selected" : "")>I'm not a photographer</option>
+                            <option value="1" @(Model.RangeId == 1 ? "selected" : "")>$0-$30 hourly</option>
+                            <option value="2" @(Model.RangeId == 2 ? "selected" : "")>$30-$60 hourly</option>
+                            <option value="3" @(Model.RangeId == 3 ? "selected" : "")>$60-$150 hourly</option>
+                            <option value="4" @(Model.RangeId == 4 ? "selected" : "")>$150+ hourly</option>
+                        </select>
+                    </div>
+                    
+                    <div class="container" id="locations">
+                        <div class="row">
+                            <div class="col-lg-12 p-0">
+                                <div class="button-group">
+                                    <button type="button" class="btn btn-default btn-sm dropdown-toggle" id="regionSelect" data-toggle="dropdown"><span class="glyphicon glyphicon-cog"></span> Selected Regions <span class="caret"></span></button>
+                                    <ul class="dropdown-menu">
+                                        @foreach (var location in Model.Locations)
+                                        {
+                                            <li><a href="#" class="" data-value="@location.Id" tabIndex="-1"><input type="checkbox" name="regions" value="@location.Id" />&nbsp;@location.Name</a></li>
+                                        }
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <input type="submit" value="Sign up" class="button button-block mt-5">
+                </form>
+            }
+        </div>
+        
+        <!-- The log in form -->
+        <div id="login" style="display: @((ViewBag.Login != null && ViewBag.Login) ? "block" : "none");">
+            <h1>Welcome Back!</h1>
+
+            <form action="/account/login" method="post" role="form" novalidate="novalidate">
+                @Html.AntiForgeryToken()
+
+                <div class="field-wrap">
+
+                    <input type="email" name="Email" placeholder="Email Address" required autocomplete="off" value="@Model.Email"/>
+                </div>
+
+                <div class="field-wrap">
+                    <input type="password" name="Password" placeholder="Password" required autocomplete="off" value="@Model.Password"/>
+                </div>
+
+                <input type="submit" value="Log in" class="button button-block">
+
+            </form>
+        </div>
+
+    </div>
+    
+    <!-- External login providers -->
+    <div class="col-md-12">
+        <section id="socialLoginForm" class="mt-4">
+            @Html.Partial("_ExternalLoginsListPartial", new ExternalLoginListViewModel { ReturnUrl = ViewBag.ReturnUrl })
+        </section>
+    </div>
+</div>
+
+<script>
+    
+    var options = [];
+
+    $('.dropdown-menu a').on('click', function (event) {
+
+        var $target = $(event.currentTarget),
+            val = $target.attr('data-value'),
+            $inp = $target.find('input'),
+            idx;
+
+        if ((idx = options.indexOf(val)) > -1) {
+            options.splice(idx, 1);
+            setTimeout(function () { $inp.prop('checked', false) }, 0);
+        } else {
+            options.push(val);
+            setTimeout(function () { $inp.prop('checked', true) }, 0);
+        }
+
+        $(event.target).blur();
+
+        console.log(options);
+        return false;
+    });
+
+
+    function hideOrShowRange() {
+        if ($("select#MembershipType").find(":selected").val() < 2) {
+            $("select#RangeId").closest(".field-wrap").hide();
+            $("select#RangeId").removeAttr("required");
+        } else {
+            $("select#RangeId").closest(".field-wrap").show();
+            $("select#RangeId").attr("required", true);
+        }
+    }
+
+    function hideOrShowLocations() {
+        console.log("location dropdown toggling");
+        if (($("select#RangeId").find(":selected").val() < 1) || ($("select#MembershipType").find(":selected").val() < 2)) {
+            console.log("location dropdown hidden");
+            $("#locations").hide();
+        } else {
+            console.log("location dropdown shown");
+            $("#locations").show();
+        }
+    }
+
+    $(function () {
+        hideOrShowRange();
+        hideOrShowLocations();
+        $('.form').find('input, textarea').on('keyup blur focus', function (e) {
+
+            var $this = $(this),
+                label = $this.prev('label');
+
+            if (e.type === 'keyup') {
+                if ($this.val() === '') {
+                    label.removeClass('active highlight');
+                } else {
+                    label.addClass('active highlight');
+                }
+            } else if (e.type === 'blur') {
+                if ($this.val() === '') {
+                    label.removeClass('active highlight');
+                } else {
+                    label.removeClass('highlight');
+                }
+            } else if (e.type === 'focus') {
+
+                if ($this.val() === '') {
+                    label.removeClass('highlight');
+                }
+                else if ($this.val() !== '') {
+                    label.addClass('highlight');
+                }
+            }
+
+        });
+
+        $('.tab a').on('click', function (e) {
+            e.preventDefault();
+
+            $(this).parent().addClass('active');
+            $(this).parent().siblings().removeClass('active');
+
+            target = $(this).attr('href');
+            $('.tab-content > div').not(target).hide();
+
+            $(target).fadeIn(600);
+
+        });
+        $.validator.setDefaults({
+            ignore: ":hidden"
+        });
+
+        // 20170412 SA Removing the required attribute on the photographer's fee dropdown if the user doesn't want to be a member.
+        $("select#MembershipType")
+            .change(function () {
+                hideOrShowRange();
+                hideOrShowLocations();
+            });
+
+        // 20170412 SA Removing the location selector if the user isn't a photographer.
+        $("select#RangeId")
+            .change(function () {
+                hideOrShowRange();
+                hideOrShowLocations();
+            });
+    });
+</script>
+
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

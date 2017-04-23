@@ -1,0 +1,59 @@
+﻿<div class="container-fluid">
+    <div class="row">
+        <div class="col-xl-3 col-lg-4 col-sm-4 col-3 justify-content-center">
+            <div class="navbar-header">
+                <a href="/"><h1 class="logo">Million Bokeh</h1></a>
+                <a class="navbar-brand pull-right hidden-xs-down" href="/">Photographers' Association</a>
+                <a class="navbar-brand hidden-sm-up" href="/">Photographers'<br />Association</a>
+            </div>
+        </div>
+        <div class="col-xl-6 col-lg-8 push-lg-1 push-xl-0 col-1 push-8 push-sm-7">
+            <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#main-nav" aria-controls="main-nav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <section class="section section--menu hidden-sm-down" id="Horatio">
+                <nav class="collapse navbar-collapse menu menu--horatio">
+                    <ul class="menu__list">
+                        <li class="menu__item @(ViewBag.CurrentMenu == "home" ? "menu__item--current" : "")"><a class="menu__link" href="/">Home</a></li>
+                        <li class="menu__item @(ViewBag.CurrentMenu == "products" ? "menu__item--current" : "")"><a class="menu__link" href="/products/">MBPA Store</a></li>
+                        <li class="menu__item @(ViewBag.CurrentMenu == "events" ? "menu__item--current" : "")"><a class="menu__link" href="/events/">Events</a></li>
+                        <li class="menu__item @(ViewBag.CurrentMenu == "findphotographer" ? "menu__item--current" : "")"><a class="menu__link" href="/members/index?findphotographer=true">Find a Photographer</a></li>
+                        <li class="menu__item @(ViewBag.CurrentMenu == "members" ? "menu__item--current" : "")"><a class="menu__link" href="/members/">For Members</a></li>
+                    </ul>
+                </nav>
+            </section>
+        </div>
+        <div class="col-xl-3 col-lg-12 col-6 text-lg-right">
+            @Html.Partial("_LoginPartial")
+        </div>
+        <div class="col-12 hidden-lg-up">
+            <section class="section section--menu" id="Horatio">
+                <nav class="collapse navbar-collapse menu menu--horatio" id="main-nav">
+                    <ul class="menu__list">
+                        @if (User.Identity.IsAuthenticated)
+                        {
+
+                            @Html.AntiForgeryToken()
+
+                            <li>
+
+                                <span class="text-warning hidden-md-up">
+                                    Hi @User.Identity.Name
+                                    @if (!(MillionBokeh.Models.Utilities.IsUserAdmin(User)))
+                                    { <a class="member-name" href="~/Orders/Index"><i class="fa fa-shopping-cart align-bottom" aria-hidden="true"></i></a>
+                                    }
+                                </span>
+                            </li>
+
+                        }
+                        <li class="menu__item @(ViewBag.CurrentMenu == "home" ? "menu__item--current" : "")"><a class="menu__link" href="/">Home</a></li>
+                        <li class="menu__item @(ViewBag.CurrentMenu == "products" ? "menu__item--current" : "")"><a class="menu__link" href="/products/">MBPA Store</a></li>
+                        <li class="menu__item @(ViewBag.CurrentMenu == "events" ? "menu__item--current" : "")"><a class="menu__link" href="/events/">Events</a></li>
+                        <li class="menu__item @(ViewBag.CurrentMenu == "findphotographer" ? "menu__item--current" : "")"><a class="menu__link" href="/members/index?findphotographer=true">Find a Photographer</a></li>
+                        <li class="menu__item @(ViewBag.CurrentMenu == "members" ? "menu__item--current" : "")"><a class="menu__link" href="/members/">For Members</a></li>
+                    </ul>
+                </nav>
+            </section>
+        </div>
+    </div>
+</div>

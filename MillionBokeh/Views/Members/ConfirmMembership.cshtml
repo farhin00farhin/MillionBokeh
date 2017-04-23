@@ -1,0 +1,30 @@
+﻿@using MillionBokeh.Controllers
+@{
+    ((MembersController)this.ViewContext.Controller).SetViewBagCurrentMenu();
+    ViewBag.Title = "Confirm Membership | Million Bokeh Photographer's Association";
+}
+<section class="container buy-membership">
+    <div class="row">
+        <div class="col-12 text-center mt-5 mb-5" >
+
+            <div class="alert alert-danger" role="alert" style="display:@((ViewBag.MembershipExpired != null && ViewBag.MembershipExpired) ? "block" : "none");">
+                <strong>Membership Expired. </strong> Please renew your membership.
+            </div>
+
+            <h1>
+                Confirm Membership
+            </h1>
+            <p>Please confirm the type of membership you want:</p>
+            <form action="/orders/payment" method="get">
+                <select required name="MembershipOption">
+                    <option value="">- Membership type -</option>
+                    <option @(ViewBag.MembershipType == 3 ? "selected" : "" ) value="3">Full ($300/year)</option>
+                    <option @(ViewBag.MembershipType == 2 ? "selected" : "" ) value="2">Associate ($180/year)</option>
+                </select>
+                <input type="submit" class="btn btn-primary btn-sm" value="Buy Now" />
+            </form>
+        </div>
+    </div>
+   
+</section>
+

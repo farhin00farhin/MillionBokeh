@@ -1,0 +1,183 @@
+﻿@model IEnumerable<MillionBokeh.Models.Product>
+
+@{
+    ViewBag.Title = "MBPA Store | Million Bokeh Photographer's Association";
+}
+
+
+@if ((MillionBokeh.Models.Utilities.IsUserAdmin(User)))
+{
+    using (Html.BeginForm(null, null, FormMethod.Post, new { id = "__AjaxAntiForgeryForm" }))
+    {
+        @Html.AntiForgeryToken()
+    }
+
+
+    @CMSHelpers.ShowAdminMessage()
+
+    <div class="container wow fadeIn justify-content-center">
+        <div class="row">
+            <div class="col">
+                <div class="alert alert-warning" role="alert">
+                    <form method="post" action="/products/create">
+                        @Html.AntiForgeryToken()
+                        <input type="submit" class="btn btn-secondary" value="Click here"> to add a new product.
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+<div class="product-list">
+    <div class="container">
+        <div class="row">
+            <div class="col-12 col-xl-2 search wow fadeInDown">
+                <i class="fa fa-search fa-2x open-search"><span>Search</span></i>
+            </div>
+            <div class="col-11 col-sm-12 col-xl-8">
+                <form action="" method="get">
+                    <div class="month-picker">
+                        <fieldset class="month-picker-fieldset">
+                            <input type="submit" name="category" value="0" id="all">
+                            <label for="all" class="month-picker-label wow fadeInRight @(ViewBag.Category <= 0 ? "selected" : "")">All</label>
+                            <input type="submit" name="category" value="1" id="dslrcameras">
+                            <label data-wow-delay=".25s" for="dslrcameras" class="month-picker-label  wow fadeInRight @(ViewBag.Category == 1 ? "selected" : "")">DSLR Cameras</label>
+                            <input type="submit" name="category" value="2" id="pointcameras">
+                            <label data-wow-delay=".45s" for="pointcameras" class="month-picker-label  wow fadeInRight @(ViewBag.Category == 2 ? "selected" : "")">Point & Shoot</label>
+                            <input type="submit" name="category" value="3" id="accesories">
+                            <label data-wow-delay=".65s" for="accesories" class="month-picker-label  wow fadeInRight @(ViewBag.Category == 3 ? "selected" : "")">Accesories</label>
+                            <input type="submit" name="category" value="4" id="equipment">
+                            <label data-wow-delay=".85s" for="equipment" class="month-picker-label  wow fadeInRight @(ViewBag.Category == 4 ? "selected" : "")">Equipment</label>
+                        </fieldset>
+                    </div>
+                </form>
+            </div>
+            <div class="col-12 col-xl-2 sorting-options">
+                <form action="" method="get" class="mb-5 mb-xl-0">
+                    <select class="form-control wow fadeInDown" name="SortBy" onchange="this.form.submit();">
+                        <option value="name" @(ViewBag.SortBy == "name" ? "selected" : "")>Name</option>
+                        <option value="price" @(ViewBag.SortBy == "price" ? "selected" : "")>Price</option>
+                    </select>
+                    <select class="form-control wow slideInDown" name="SortOrder" onchange="this.form.submit();">
+                        <option value="asc" @(ViewBag.SortOrder == "asc" ? "selected" : "")>@ViewBag.AscText</option>
+                        <option value="desc" @(ViewBag.SortOrder == "desc" ? "selected" : "")>@ViewBag.DescText</option>
+                    </select>
+                    <input type="hidden" name="category" value="@ViewBag.Category">
+                    <input type="hidden" name="term" value="@ViewBag.Term">
+                    <input type="hidden" name="pagenumber" value="@ViewBag.CurrentPage">
+                </form>
+            </div>
+
+        </div>
+        <div class="wow fadeIn" data-wow-delay="1s">
+            @if (Model.Count() <= 0)
+            {
+                <div class="alert alert-danger" role="alert">
+                    Sorry, there are no products that meet your search criteria. Please try again.
+                </div>
+            }
+            else if (!string.IsNullOrWhiteSpace(ViewBag.Term))
+            {
+                <div class="alert alert-info search-notification" role="alert">
+                    Your search returned <strong>@ViewBag.TotalNum</strong> results.
+                </div>
+            }
+        </div>
+      
+
+        <div class="row justify-content-start">
+
+
+            @foreach (var item in Model)
+            {
+                <div class="col-xl-4 col-lg-6 wow fadeInUp" data-wow-delay="1s">
+                    <div class="card mb-4 hvr-bounce-to-bottom">
+                        <a href="/products/details?id=@item.ProductID"><img class="card-img-top img-thumbnail" src="/images/products/@item.Image" alt="@item.ProductName"></a>
+                        <div class="card-block">
+                            <a href="/products/details?id=@item.ProductID"><h4 class="card-title">@item.ProductName</h4></a>
+                            <p class="card-text">@Html.Raw(item.Description.Substring(0, (item.Description.Length > 73 ? 73 : item.Description.Length)))...</p>
+                        </div>
+                        <div class="card-footer">
+                            <a href="/products/details?id=@item.ProductID">
+                                <small class="text-muted">Price: $@item.UnitPrice.ToString("0.00")</small>
+                            </a>
+
+                            <div class="rating pull-right">
+                                @if (item.Rating >= 5)
+                                { <i class="fa fa-star"></i> }
+                                else
+                                { <i class="fa fa-star-o"></i> }
+
+                                @if (item.Rating >= 4)
+                                { <i class="fa fa-star"></i> }
+                                else
+                                { <i class="fa fa-star-o"></i> }
+
+                                @if (item.Rating >= 3)
+                                { <i class="fa fa-star"></i> }
+                                else
+                                { <i class="fa fa-star-o"></i> }
+
+                                @if (item.Rating >= 2)
+                                { <i class="fa fa-star"></i> }
+                                else
+                                { <i class="fa fa-star-o"></i> }
+
+                                @if (item.Rating >= 1)
+                                { <i class="fa fa-star"></i> }
+                                else
+                                { <i class="fa fa-star-o"></i> }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+
+        @if (Model.Any())
+        {
+            <div class="row">
+                <div class="col">
+                    <nav aria-label="Page navigation example">
+                        <ul class="pagination wow slideInRight">
+                            <li class="page-item @ViewBag.PreviousPageDisabled"><a class="page-link" href="@string.Format(ViewBag.PageNumberUrl, ViewBag.PreviousPage)">Previous</a></li>
+                            @for (int i = 1; i <= (Math.Ceiling((double)(ViewBag.TotalNum / 9.0))); i++)
+                            {
+                                <li class="page-item @((Convert.ToInt32(ViewBag.CurrentPage) == i) ? "active" : "")"><a class="page-link" href="@string.Format(ViewBag.PageNumberUrl, i)">@i</a></li>
+                            }
+                            <li class="page-item @ViewBag.NextPageDisabled"><a class="page-link" href="@string.Format(ViewBag.PageNumberUrl, ViewBag.NextPage)">Next</a></li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+<div class="overlay">
+    <a class="closebtn"><i class="fa fa-times"></i></a>
+    <div class="overlay-content">
+        <form action="" method="get">
+            <div id="search-elements-div">
+                <input type="search" name="term" placeholder="Search" class="search-input" list="suggestions">
+                <input type="hidden" name="category" value="@ViewBag.Category">
+                <input type="hidden" name="sortby" value="@ViewBag.SortBy">
+                <input type="hidden" name="sortorder" value="@ViewBag.SortOrder">
+                <input type="hidden" name="pagenumber" value="1">
+                <datalist id="suggestions"></datalist>
+                <input type="submit" class="button search-button visually-hidden" value="Search">
+            </div>
+        </form>
+    </div>
+</div>
+
+<script src="~/Scripts/autocompleteScript.js"></script>
+
+<script>
+
+    $(".search-input").keyup(function () {
+        AutoComplete($(this).val(), "/products/AutoComplete");
+    });
+
+
+</script>

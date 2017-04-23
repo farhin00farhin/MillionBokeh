@@ -1,0 +1,21 @@
+﻿@using Microsoft.AspNet.Identity
+@using MillionBokeh.Models
+@if (User.Identity.IsAuthenticated)
+{
+    using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { id = "logoutForm", @class = "navbar-right" }))
+    {
+        @Html.AntiForgeryToken()
+
+        <span class="text-warning hidden-sm-down m-2 align-bottom">Hi <a class="member-name" href="/members/details?id=@Utilities.GetLoggedInUserId(User)">@User.Identity.Name</a>
+@if (!(Utilities.IsUserAdmin(User) && !Utilities.IsMembershipValid(Utilities.GetMember(User))))
+{
+    <a href="~/Orders/Index"><i class="fa fa-shopping-cart align-bottom" aria-hidden="true"></i></a>}
+    </span>
+                <a class="sign-in" href="javascript:document.getElementById('logoutForm').submit()">Log off</a>
+    }
+}
+else
+{
+    <a class="btn btn-default navbar-btn sign-in" id="signupButton" href="/account/register">Sign Up</a>
+    <a class="btn btn-default navbar-btn sign-in log-in" id="loginButton" href="/account/login"> Log In</a>
+}

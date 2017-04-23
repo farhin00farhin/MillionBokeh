@@ -1,0 +1,79 @@
+﻿@model IEnumerable<OrderItem>
+@using MillionBokeh.Models
+
+@{
+    ViewBag.Title = "Success";
+}
+<div class="container">
+    <div class="row">
+        <div class="col-12 text-center mt-5 mb-5">
+            <h2>Success</h2>
+            <div class="alert alert-success" role="alert">
+                <strong>Congratulations!</strong> Your payment was successful.
+            </div>
+        </div>
+    </div>
+
+    <section class="row">
+        @if (Model.Count() > 0)
+        {
+            <h2 class="mt-5">Please review your purchases</h2>
+
+            <form action="/orders/SubmitReview" method="post" id="reviewForm">
+                @Html.AntiForgeryToken()
+                <div style="overflow-x:auto;">
+                    <table id="cart" class="table table-hover table-condensed">
+                        <thead>
+                            <tr>
+                                <th style="width:50%">Product</th>
+                                <th style="width:35%">Comment</th>
+                                <th style="width:15%">Rating</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td data-th="Product">
+                                        <input type="hidden" value="@(item.ItemId)" name="id@(item.ItemId)" id="id@(item.ItemId)" />
+
+                                        <div class="row">
+                                            <div class="col-sm-4 hidden-xs"><img src="@("/images/" + item.ItemType + "s/" + item.ItemImage)" class="img-fluid" alt="@item.ItemName" /></div>
+                                            <div class="col-sm-8">
+                                                <h4 class="nomargin">@item.ItemName</h4>
+                                                <p>@Html.Raw(item.ItemDescription.Substring(0, (item.ItemDescription.Length > 73 ? 73 : item.ItemDescription.Length)))...</p>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td data-th="Comment"><textarea id="comment@(item.Id)" name="comment@(item.Id)" rows="6" form="reviewForm"></textarea></td>
+                                    <td data-th="Rating">
+                                        <div class="starrr"></div>
+                                        <input type="hidden" value="1" name="rating@(item.Id)" id="rating@(item.Id)" />
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+                <input type="submit" class="btn btn-success btn-block" value="Submit" />
+
+            </form>
+
+        }
+    </section>
+</div>
+
+
+    
+<script>
+    $(function () {
+
+        $('.starrr').starrr({
+            max: 5,
+            change: function (e, value) {
+                $(this).next().val(value);
+            }
+        });
+
+    });
+</script>

@@ -1,0 +1,170 @@
+﻿@model MillionBokeh.Models.HomeViewModel
+
+@using MillionBokeh.Controllers
+@using MillionBokeh.Models
+
+@{
+    ViewBag.EditUrl = "/home/edit";
+    ViewBag.CurrentMenu = "members";
+
+}
+
+@if ((MillionBokeh.Models.Utilities.IsUserAdmin(User)))
+{
+    using (Html.BeginForm(null, null, FormMethod.Post, new { id = "__AjaxAntiForgeryForm" }))
+    {
+        @Html.AntiForgeryToken()
+    }
+
+    @CMSHelpers.ShowAdminMessage()
+
+}
+    <!-- Benefits section -->
+
+<section class="container benefits">
+    <h1 class="text-center mt-5 wow fadeInDown">Membership Benefits</h1>
+    <div class="row">
+        @if (!Utilities.IsMembershipValid(Utilities.GetMember(User)))
+        {
+            <div class="col-12 wow fadeInLeft" data-wow-delay="1s">
+                <div class="card" id="join-now">
+                    <article class="card-block">
+                        <div class="card-text cmsdisplay" data-property="RenewCard10Text">
+                            @Html.Raw(Model.RenewCard10Text)
+                        </div>@CMSHelpers.CMSEditorTinyMCE("RenewCard10Text", Model.RenewCard10Text)
+                        <a href="/members/refer/"><h3 class="card-title text-center">Join Now!</h3></a>
+                    </article>
+                </div>
+            </div>
+        }
+        <div class="col-xl-6 col-12 wow fadeInLeft">
+            <div class="card">
+                <article class="card-block">
+                    <h3 class="card-title cmsdisplay" data-property="RenewCard1Title">
+                        @Model.RenewCard1Title
+                    </h3>@CMSHelpers.CMSEditorSimple("RenewCard1Title", Model.RenewCard1Title)
+                    <p class="card-text cmsdisplay" data-property="RenewCard1Text">
+                        @Model.RenewCard1Text
+                    </p>@CMSHelpers.CMSEditorLarge("RenewCard1Text", Model.RenewCard1Text)
+                </article>
+            </div>
+        </div>
+        <div class="col-xl-6 col-12 wow fadeInRight">
+            <div class="card">
+                <article class="card-block">
+                    <h3 class="card-title cmsdisplay" data-property="RenewCard2Title">
+                        @Model.RenewCard2Title
+                    </h3>@CMSHelpers.CMSEditorSimple("RenewCard2Title", Model.RenewCard2Title)
+                    <p class="card-text cmsdisplay" data-property="RenewCard2Text">
+                        @Model.RenewCard2Text
+                    </p>@CMSHelpers.CMSEditorLarge("RenewCard2Text", Model.RenewCard2Text)
+                </article>
+            </div>
+        </div>
+        <div class="col-xl-6 col-12 wow fadeInLeft" data-wow-delay=".25s">
+            <div class="card">
+                <article class="card-block">
+                    <h3 class="card-title cmsdisplay" data-property="RenewCard3Title">
+                        @Model.RenewCard3Title
+                </h3>@CMSHelpers.CMSEditorSimple("RenewCard3Title", Model.RenewCard3Title)
+                <p class="card-text cmsdisplay" data-property="RenewCard3Text">
+                    @Model.RenewCard3Text
+                </p>@CMSHelpers.CMSEditorLarge("RenewCard3Text", Model.RenewCard3Text)
+            </article>
+        </div>
+    </div>
+    <div class="col-xl-6 col-12 wow fadeInRight" data-wow-delay=".25s">
+        <div class="card">
+            <article class="card-block">
+                <h3 class="card-title cmsdisplay" data-property="RenewCard4Title">
+                    @Model.RenewCard4Title
+            </h3>@CMSHelpers.CMSEditorSimple("RenewCard4Title", Model.RenewCard4Title)
+            <p class="card-text cmsdisplay" data-property="RenewCard4Text">
+                @Model.RenewCard4Text
+            </p>@CMSHelpers.CMSEditorLarge("RenewCard4Text", Model.RenewCard4Text)
+        </article>
+    </div>
+</div>
+<div class="col-xl-6 col-12 wow fadeInLeft" data-wow-delay=".5s">
+    <div class="card">
+        <article class="card-block">
+            <h3 class="card-title cmsdisplay" data-property="RenewCard5Title">
+                @Model.RenewCard5Title
+        </h3>@CMSHelpers.CMSEditorSimple("RenewCard5Title", Model.RenewCard5Title)
+        <p class="card-text cmsdisplay" data-property="RenewCard5Text">
+            @Model.RenewCard5Text
+        </p>@CMSHelpers.CMSEditorLarge("RenewCard5Text", Model.RenewCard5Text)
+    </article>
+</div>
+</div>
+<div class="col-xl-6 col-12 wow fadeInRight" data-wow-delay=".5s">
+    <div class="card">
+        <article class="card-block">
+            <h3 class="card-title cmsdisplay" data-property="RenewCard6Title">
+                @Model.RenewCard6Title
+        </h3>@CMSHelpers.CMSEditorSimple("RenewCard6Title", Model.RenewCard6Title)
+        <p class="card-text cmsdisplay" data-property="RenewCard6Text">
+            @Model.RenewCard6Text
+        </p>@CMSHelpers.CMSEditorLarge("RenewCard6Text", Model.RenewCard6Text)
+    </article>
+</div>
+</div>
+<div class="col-xl-6 col-12 wow fadeInLeft" data-wow-delay=".75s">
+    <div class="card">
+        <article class="card-block">
+            <h3 class="card-title cmsdisplay" data-property="RenewCard7Title">
+                @Model.RenewCard7Title
+        </h3>@CMSHelpers.CMSEditorSimple("RenewCard7Title", Model.RenewCard7Title)
+        <p class="card-text cmsdisplay" data-property="RenewCard7Text">
+            @Model.RenewCard7Text
+        </p>@CMSHelpers.CMSEditorLarge("RenewCard7Text", Model.RenewCard7Text)
+    </article>
+</div>
+</div>
+<div class="col-xl-6 col-12 wow fadeInRight" data-wow-delay=".75s">
+    <div class="card">
+        <article class="card-block">
+            <h3 class="card-title cmsdisplay" data-property="RenewCard8Title">
+                @Model.RenewCard8Title
+        </h3>@CMSHelpers.CMSEditorSimple("RenewCard8Title", Model.RenewCard8Title)
+        <p class="card-text cmsdisplay" data-property="RenewCard8Text">
+            @Model.RenewCard8Text
+        </p>@CMSHelpers.CMSEditorLarge("RenewCard8Text", Model.RenewCard8Text)
+    </article>
+</div>
+</div>
+<div class="col-12 wow fadeInLeft" data-wow-delay="1s">
+    <div class="card">
+        <article class="card-block">
+            <h3 class="card-title cmsdisplay" data-property="RenewCard9Title">@Model.RenewCard9Title</h3>@CMSHelpers.CMSEditorSimple("RenewCard9Title", Model.RenewCard9Title)
+            <p class="card-text cmsdisplay" data-property="RenewCard9Text">
+                @Model.RenewCard9Text
+            </p>@CMSHelpers.CMSEditorLarge("RenewCard9Text", Model.RenewCard9Text)
+        </article>
+    </div>
+</div>
+        
+      
+
+    </div>
+<div class="row">
+    <div class="col">
+        <a href="~/Members/" class="btn btn-secondary btn-sm pull-right custom-button wow fadeInRight"><i class="fa fa-arrow-left" aria-hidden="true"></i></a>
+    </div>
+</div>
+</section>
+
+
+
+
+@if ((MillionBokeh.Models.Utilities.IsUserAdmin(User)))
+{
+    <script src="~/Scripts/CMSScript.js"></script>
+
+    <script>
+        $(function () {
+            InitialiseCMS("0", "@ViewBag.EditUrl", "/Home/UploadImage/", "/images/Site/");
+        });
+
+    </script>
+}

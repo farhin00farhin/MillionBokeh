@@ -1,0 +1,168 @@
+﻿@using MillionBokeh.Models
+@model MillionBokeh.Models.Event
+
+@{
+    ViewBag.Title = "Event Details | Million Bokeh Photographer's Association";
+    ViewBag.EditUrl = "/events/edit";
+}
+
+
+@if ((MillionBokeh.Models.Utilities.IsUserAdmin(User)))
+{
+    using (Html.BeginForm(null, null, FormMethod.Post, new { id = "__AjaxAntiForgeryForm" }))
+    {
+        @Html.AntiForgeryToken()
+    }
+
+    @CMSHelpers.ShowAdminMessage()
+
+
+    <div class="container wow fadeIn justify-content-center">
+        <div class="row">
+            <div class="col">
+                <div class="alert alert-warning" role="alert">
+                    <button type="button" class="btn btn-sm btn-secondary" data-toggle="modal" data-target="#deleteModal">
+                        Click here
+                    </button>
+                    to delete this event
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalLabel">Are you sure?</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    Are you sure you want to delete this event permanently from the database?
+                </div>
+                <div class="modal-footer">
+                    <form method="post" action="/events/delete">
+                        <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Cancel</button>
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="id" value="@Model.EventID" />
+                        <input type="submit" class="btn btn-danger" value="Delete">
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+<!-- The event page -->
+<section class="container events-details">
+    <div class="row">
+        <div class="col margin-around">
+            <h1 class="event-name wow fadeInDown cmsdisplay" data-property="Name">@Model.Name</h1>
+            @CMSHelpers.CMSEditorSimple("Name", Model.Name)
+            <img class="img-fluid wow fadeInDown cmsdisplay" data-property="Image" src="~/images/events/@Model.Image" alt="@Model.Name"/>
+            @CMSHelpers.CMSEditorImage()
+        </div>
+    </div>
+    <div class="row event-info">
+        <div class="col-xl-8 col-lg-7 ">
+            <div class="row justify-content-center wow fadeInDown" data-wow-offset="250">
+                <div class="offset-xl-3 offset-lg-0 col-3 text-left">
+                    <i class="fa fa-globe"></i>&nbsp;&nbsp;<span class="hidden-sm-down">Location:</span> 
+                </div>
+                <div class="col-6 font-weight-bold cmsdisplay" data-property="Location">
+                    @Model.Location
+                </div>
+                @CMSHelpers.CMSEditorSimple("Location", Model.Location)
+            </div>
+            <div class="row justify-content-center wow fadeInDown" data-wow-offset="250">
+                <div class="col-3 offset-xl-3 offset-lg-0 text-left">
+                    <i class="fa fa-calendar"></i>&nbsp;&nbsp;<span class="hidden-sm-down">Date:</span> 
+                </div>
+                <div class="col-6 font-weight-bold cmsdisplay datedisplay" data-property="StartDate">
+                    @Model.StartDate.ToString("dd/MM/yyyy")
+                </div>
+                @CMSHelpers.CMSEditorSimple("StartDate", Model.StartDate.ToString("yyyy-MM-ddThh:mm:ss"), "datetime-local")
+            </div>
+            <div class="row justify-content-center wow fadeInDown" data-wow-offset="250">
+                <div class="col-3 offset-xl-3 offset-lg-0 text-left">
+                    <i class="fa fa-clock-o"></i>&nbsp;&nbsp;<span class="hidden-sm-down">Time:</span> 
+                </div>
+                <div class="col-6 font-weight-bold">
+                    <span class="cmsdisplay timedisplay" data-property="StartDate">@Model.StartDate.ToString("h:mm tt")</span>
+                    (<span class="cmsdisplay" data-property="Duration">@Html.DisplayFor(model => model.Duration)</span> hours)
+                    @CMSHelpers.CMSEditorSimple("Duration", Model.Duration.ToString(), "number")
+                </div>
+            </div>
+            <div class="row justify-content-center wow fadeInDown" data-wow-offset="250">
+                <div class="col-3 offset-xl-3 offset-lg-0 text-left">
+                    <i class="fa fa-user"></i>&nbsp;&nbsp;<span class="hidden-sm-down">Organiser:</span> 
+                </div>
+                <div class="col-6 font-weight-bold cmsdisplay" data-property="Organiser" >
+                    @Html.DisplayFor(model => model.Organiser)
+                </div>
+                @CMSHelpers.CMSEditorSimple("Organiser", Model.Organiser)
+            </div>
+            <div class="row justify-content-center wow fadeInDown" data-wow-offset="250">
+                <div class="col-3 offset-xl-3 offset-lg-0 text-left">
+                    <i class="fa fa-usd"></i>&nbsp;&nbsp;<span class="hidden-sm-down">Price:</span> 
+                </div>
+                <div class="col-6 font-weight-bold">
+                    $<span class="cmsdisplay" data-property="Fee">@Model.Fee.ToString("0.00")</span>
+                </div>
+                @CMSHelpers.CMSEditorSimple("Fee", Model.Fee.ToString("0.00"), "number")
+            </div>
+        </div>
+        <div class="col-xl-4 col-lg-5 ticket text-center wow fadeInDown" data-wow-offset="250">
+            <div class="tixContainer">
+                @if (!(Utilities.IsUserAdmin(User) && !Utilities.IsMembershipValid(Utilities.GetMember(User))))
+                {
+                <a class="tix" href="/orders/add?itemId=@(Model.EventID)&itemType=event">
+                    <div class="tixInner">
+                        <span><strong>BUY</strong> Ticket</span>
+                    </div>
+                </a>
+                }
+
+            </div>
+            <div class="col font-italic">
+                Associate members recieve a 8% and full members receive a 12% discount on the full price
+            </div>
+        </div>
+    </div>
+
+   <hr class="mt-5 wow fadeInDown" data-wow-offset="250"/>
+
+    <div class="row">
+        <div class="offset-md-1 col-9 text-left lead mt-4 wow fadeInDown" data-wow-offset="250">
+
+            <span class="cmsdisplay" data-property="Description">@Html.Raw(Model.Description)</span>
+            @CMSHelpers.CMSEditorTinyMCE("Description", Model.Description)
+
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col">
+                <a href="/events/" class="btn btn-secondary btn-sm pull-right custom-button wow fadeInRight"> Back to events</a>
+        </div>
+    </div>
+</section>
+@if ((MillionBokeh.Models.Utilities.IsUserAdmin(User)))
+{
+
+    <script src="~/Scripts/CMSScript.js"></script>
+
+    <script>
+
+        $(function () {
+
+            InitialiseCMS("@(Model.EventID)", "@ViewBag.EditUrl", "/Events/UploadImage/", "/images/events/");
+        
+        });
+
+
+    </script>
+
+}

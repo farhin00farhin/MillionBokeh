@@ -1,0 +1,100 @@
+﻿@using Microsoft.AspNet.Identity
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title</title>
+
+
+    <link href="~/Content/component.css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css?family=Libre+Baskerville|Lobster" rel="stylesheet">
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans|Rozha+One" rel="stylesheet">
+    <link href="~/Content/animate.css" rel="stylesheet" />
+    <link href="~/Content/tether.min.css" rel="stylesheet" />
+    <link href="~/Content/hover-min.css" rel="stylesheet" />
+    @Styles.Render("~/Content/css")
+
+
+    <script src="~/Scripts/wow.min.js"></script>
+    <script src="~/Scripts/tether.min.js"></script>
+    <script src="~/Scripts/moment.js"></script>
+    <script src="~/Scripts/tinymce/tinymce.min.js"></script>
+    @Scripts.Render("~/bundles/modernizr")
+    @Scripts.Render("~/bundles/jquery")
+    <script src="~/Scripts/starrr.js"></script>
+
+    @if ((MillionBokeh.Models.Utilities.IsUserAdmin(User)))
+    {
+        <style>
+            .cmsdisplay {
+                cursor: pointer;
+            }
+        </style>
+    }
+</head>
+<body>
+    <div class="navbar navbar-toggleable-md navbar-inverse wow fadeInDown home">
+        @Html.Partial("Navbar")
+    </div>
+
+    <div class="body-content">
+        @RenderBody()
+    </div>
+
+    <footer class="footer">
+        <section class="section section--menu" id="Horatio">
+            <nav class="menu menu--horatio">
+                <ul class="menu__list">
+                    <li class="menu__item menu__item--current"><a class="menu__link" href="/">Home</a></li>
+                    <li class="menu__item"><a class="menu__link" href="/products/">MBPA Store</a></li>
+                    <li class="menu__item"><a class="menu__link" href="/events/">Events</a></li>
+                    <li class="menu__item"><a class="menu__link" href="/members/index?findphotographer=true">Find a Photographer</a></li>
+                    <li class="menu__item"><a class="menu__link" href="/members/">For Members</a></li>
+                </ul>
+
+            </nav>
+        </section>
+        <p class="copyright">© 2017 MBPA - Million Bokeh Photographers' Association</p>
+    </footer>
+    @Scripts.Render("~/bundles/jquery")
+    <script src="~/Scripts/bootstrap.min.js"></script>
+    @RenderSection("scripts", required: false)
+
+    <script>
+        new WOW().init();
+
+        setTimeout(function () {
+            // first time page loads
+            $(".polaroids:first").addClass('current');
+            $(".polaroids.current").addClass("fadeInLeft animated");
+
+
+
+
+            // home slideshow
+            setInterval(function () {
+                $(".polaroids.current").addClass("fadeOutRight animated");
+                setTimeout(function () {
+                    $(".polaroids.current").removeClass("fadeOutRight animated");
+
+                    //change current to the next slide.
+                    var newSlide = $(".polaroids.current").removeClass("current").next();
+                    if (newSlide.length) {
+                        newSlide.addClass("current");
+                    } else {
+                        $(".polaroids:first").addClass('current');
+                    }
+
+                    //start animation on the new slide.
+                    $(".polaroids.current").addClass("fadeInLeft animated");
+                }, 1000);
+            }, 7000);
+        }, 1500);
+
+
+
+    </script>
+</body>
+</html>
